@@ -1,0 +1,5 @@
+{
+	'module': 'ide-docs/services/menu/docs',
+	'extensionPoint': 'ide-docs-menu',
+	'description': 'Documents Menu'
+}
