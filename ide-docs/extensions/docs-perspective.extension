@@ -1,5 +1,5 @@
 {
 	'module': 'ide-docs/services/docs-perspective.js',
-	'extensionPoint': 'ide-docs',
+	'extensionPoint': 'ide-perspective',
 	'description': 'Documents Perspective'
 }
