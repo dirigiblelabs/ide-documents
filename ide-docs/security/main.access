@@ -1,0 +1,31 @@
+[  
+   {  
+      "location": "/docs-explorer/manage",
+      "roles": [{  
+            "role": "Administrator"
+         }, {
+            "role": "Operator"
+         }]
+   }, {  
+      "location": "/docs-explorer/read/folder",
+      "roles":[{
+	  		"role": "ReadOnly"
+	     }, {
+	        "role": "Operator"
+	     }]
+   }, {  
+      "location": "/docs-explorer/read/document",
+      "roles":[{  
+            "role": "ReadOnly"
+         }, {  
+            "role": "Operator"
+         }]
+   }, {  
+      "location":"/docs-explorer/web",
+      "roles":[{  
+            "role":"ReadOnly"
+         }, {  
+            "role":"Operator"
+         }]
+   }
+]
