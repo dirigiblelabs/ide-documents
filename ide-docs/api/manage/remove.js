@@ -3,9 +3,9 @@
 
 var request = require("http/v3/request");
 var response = require("http/v3/response");
-var cmisObjectLib = require("docs-explorer/api/lib/object");
-var folderLib = require("docs-explorer/api/lib/folder");
-var requestHandler = require("docs-explorer/api/lib/request-handler");
+var cmisObjectLib = require("ide-docs/api/lib/object");
+var folderLib = require("ide-docs/api/lib/folder");
+var requestHandler = require("ide-docs/api/lib/request-handler");
 
 requestHandler.handleRequest({
 	handlers : {

@@ -4,9 +4,9 @@
 var request = require("http/v3/request");
 var response = require("http/v3/response");
 var upload = require('http/v3/upload');
-var documentLib = require("docs-explorer/api/lib/document");
-var folderLib = require("docs-explorer/api/lib/folder");
-var requestHandler = require("docs-explorer/api/lib/request-handler");
+var documentLib = require("ide-docs/api/lib/document");
+var folderLib = require("ide-docs/api/lib/folder");
+var requestHandler = require("ide-docs/api/lib/request-handler");
 
 requestHandler.handleRequest({
 	handlers : {

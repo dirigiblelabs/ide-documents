@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html id="ng-app" ng-app="app">
    <head>
-      <title>Documents Explorer</title>
+      <title>Documents</title>
       <!-- Fix for old browsers -->
       <script src="https://nervgh.github.io/js/es5-shim.min.js"></script>
       <script src="https://nervgh.github.io/js/es5-sham.min.js"></script>
       <!-- scripts/angular.js -->
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.17/angular.min.js"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.17/angular-resource.min.js"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.17/angular-route.min.js"></script>
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.2.17/angular-sanitize.min.js"></script>
+      <script src="/services/v3/web/resources/angular/1.4.7/angular.min.js"></script>
+      <script src="/services/v3/web/resources/angular/1.4.7/angular-resource.min.js"></script>
+      <script src="/services/v3/web/resources/angular/1.4.7/angular-route.min.js"></script>
+      <script src="/services/v3/web/resources/angular/1.4.7/angular-sanitize.min.js"></script>
       <!-- end -->
       <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-file-upload/1.1.5/angular-file-upload.min.js"></script>
       <script src="web/controllers.js"></script>
@@ -21,18 +21,27 @@
          html, body { height: 100%; }
       </style>
       
-      <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-	  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-	  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
-	  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
-	  <link rel="stylesheet" href="/services/web/resources/css/forms.css">
-	  <script src="/services/web/resources/themes/theme.js"></script>
+      <!-- FontAwesome icon set -->
+      <link type="text/css" href="/services/v3/web/resources/font-awesome-4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+      <!-- Twitter Bootstrap with Theme Support -->
+	  <link type="text/css" rel="stylesheet" href="/services/v3/core/theme/bootstrap.min.css">
+	
+	  <!-- jQuery -->
+	  <script type="text/javascript" src="/services/v3/web/resources/jquery/2.0.3/jquery.min.js"></script>
+	
+	  <!-- Twitter Bootstrap with Theme Support -->
+	  <script type="text/javascript" src="/services/v3/web/resources/bootstrap/3.3.7/bootstrap.min.js"></script>
+	  
+	  <!-- Custom IDE Styles -->
+	  <link type="text/css" rel="stylesheet" href="/services/v3/core/theme/ide.css" />
+	  
    </head>
    <body>
       <div class="container" ng-controller="DocServiceCtrl" nv-file-drop="" uploader="uploader" filters="queueLimit, customFilter">
       	 <div class="row">
 			<div class="col-lg-12">
-		    	<h1 class="page-header">Documents Explorer</h1>
+		    	<h1 class="page-header">Documents</h1>
 			</div>
 		 </div>
          <div class="row">
@@ -169,13 +178,5 @@
             </div>
          </div>
       </div>
-      
-      <footer class="footer">
-        <div class="container">
-          <p class="text-muted">
-            Documents Explorer v.1.5. Copyright &copy; 2010-2017 Eclipse Foundation, Inc. The Eclipse Dirigible project source code and Dirigible Labs projects are provided under the <a href="https://www.eclipse.org/legal/epl-v10.html">Eclipse Public License - v 1.0</a>
-          </p>
-        </div>
-      </footer>
    </body>
 </html>

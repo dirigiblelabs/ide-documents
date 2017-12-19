@@ -4,8 +4,8 @@
 var request = require("http/v3/request");
 var response = require("http/v3/response");
 var upload = require('http/v3/upload');
-var requestHandler = require("docs-explorer/api/lib/request-handler");
-var zipLib = require("docs-explorer/api/lib/zip");
+var requestHandler = require("ide-docs/api/lib/request-handler");
+var zipLib = require("ide-docs/api/lib/zip");
 
 requestHandler.handleRequest({
 	handlers : {

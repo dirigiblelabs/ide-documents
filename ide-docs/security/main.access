@@ -1,31 +1,33 @@
-[  
+{
+  "constraints":[  
    {  
-      "location": "/docs-explorer/manage",
-      "roles": [{  
-            "role": "Administrator"
-         }, {
-            "role": "Operator"
-         }]
+      "uri": "/ide-docs/manage",
+      "method":"*",
+      "roles": [
+      	"Administrator",
+        "Operator"
+      ]
    }, {  
-      "location": "/docs-explorer/read/folder",
-      "roles":[{
-	  		"role": "ReadOnly"
-	     }, {
-	        "role": "Operator"
-	     }]
+      "uri": "/ide-docs/read/folder",
+      "method":"*",
+      "roles":[
+        "ReadOnly",
+	    "Operator"
+	  ]
    }, {  
-      "location": "/docs-explorer/read/document",
-      "roles":[{  
-            "role": "ReadOnly"
-         }, {  
-            "role": "Operator"
-         }]
+      "uri": "/ide-docs/read/document",
+      "method":"*",
+      "roles":[  
+         "ReadOnly",
+         "Operator"
+      ]
    }, {  
-      "location":"/docs-explorer/web",
-      "roles":[{  
-            "role":"ReadOnly"
-         }, {  
-            "role":"Operator"
-         }]
+      "uri":"/ide-docs/web",
+      "method":"*",
+      "roles":[
+         "ReadOnly",
+         "Operator"
+      ]
    }
-]
+  ]
+}

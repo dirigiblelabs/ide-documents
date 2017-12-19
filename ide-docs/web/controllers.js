@@ -2,7 +2,7 @@
 angular
 .module('app', ['angularFileUpload'])
 .controller('DocServiceCtrl', ['$scope', '$http', 'FileUploader', function($scope, $http, FileUploader) {
-	var rootPath = '../../js/docs-explorer/api';
+	var rootPath = '../../js/ide-docs/api';
 	var managePath = rootPath + '/manage';
 	var createPath = managePath + '/create';
 	$scope.createDocPath = createPath + '/document';

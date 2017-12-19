@@ -3,7 +3,7 @@
 
 var cmis = require('cms/v3/cmis');
 var streams = require('io/v3/streams');
-var cmisObjectLib = require("docs-explorer/api/lib/object");
+var cmisObjectLib = require("ide-docs/api/lib/object");
 
 var cmisSession = cmis.getSession();
 

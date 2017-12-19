@@ -2,7 +2,7 @@
 /* eslint-env node, dirigible */
 
 var cmis = require('cms/v3/cmis');
-var cmisObjectLib = require("docs-explorer/api/lib/object");
+var cmisObjectLib = require("ide-docs/api/lib/object");
 
 var cmisSession = cmis.getSession();
 

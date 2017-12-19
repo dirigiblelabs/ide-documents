@@ -3,9 +3,9 @@
 
 var streams = require('io/v3/streams');
 var zipAPI = require('io/v3/zip');
-var folderLib = require("docs-explorer/api/lib/folder");
-var documentLib = require("docs-explorer/api/lib/document");
-var objectLib = require("docs-explorer/api/lib/object");
+var folderLib = require("ide-docs/api/lib/folder");
+var documentLib = require("ide-docs/api/lib/document");
+var objectLib = require("ide-docs/api/lib/object");
 
 const SEPARATOR = '/';
 
