@@ -9,13 +9,13 @@
   ~ SAP - initial API and implementation
   -->
 
-<html lang="en">
+<html lang="en" ng-app="documents" ng-controller="DocumentsController as db">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>Eclipse Dirigible &trade; | Documents </title>
+	<title brandtitle perspective-name="Documents"></title>
 
     <link rel="shortcut icon" type="image/png" href="../../../../services/v3/web/resources/images/favicon.png" />
 	
@@ -33,7 +33,7 @@
 	<link type="text/css" rel="stylesheet" href="../../../../services/v3/core/theme/ide.css" />
 </head>
 
-<body ng-app="documents" ng-controller="DocumentsController as db">
+<body>
 
 	<div menu menu-data-url="../../js/ide-documents/services/menu-docs.js"></div>
 	
