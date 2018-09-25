@@ -180,6 +180,8 @@ angular
     var uploader = $scope.uploader = new FileUploader({
         url: $scope.createDocPath
     });
+    
+	uploader.headers['X-Requested-With'] = 'Fetch';
 
     // UPLOADER FILTERS
 
