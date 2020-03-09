@@ -9,13 +9,24 @@
  *   SAP - initial API and implementation
  */
 /*globals angular, $ */
+
+var csrfToken = null;
+
 angular
 .module('app', ['angularFileUpload'])
 .factory('httpRequestInterceptor', function () {
 	return {
 		request: function (config) {
 			config.headers['X-Requested-With'] = 'Fetch';
+			config.headers['X-CSRF-Token'] = csrfToken ? csrfToken : 'Fetch';
 			return config;
+		},
+		response: function(response) {
+			var token = response.headers()['x-csrf-token'];
+			if (token) {
+				csrfToken = token;
+			}
+			return response;
 		}
 	};
 })
@@ -192,6 +203,7 @@ angular
     });
     
 	uploader.headers['X-Requested-With'] = 'Fetch';
+	uploader.headers['X-CSRF-Token'] = csrfToken;
 
     // UPLOADER FILTERS
 
