@@ -32,5 +32,6 @@ function getAccessDefinitions() {
 function updateAccessDefinitions(accessDefinitions) {
     var path = "/registry/public/ide-documents/security/roles.access";
     var content = JSON.stringify(accessDefinitions);
-    repositoryManager.createResource(path, content)
+    repositoryManager.deleteResource(path);
+    repositoryManager.createResource(path, content);
 }
