@@ -42,6 +42,8 @@ function unescapePath(path){
 
 function filterByAccessDefinitions(folder) {
 	let accessDefinitions = JSON.parse(repositoryContent.getText("ide-documents/security/roles.access"));
+	let adminAccessDefinitions = JSON.parse(repositoryContent.getText("ide-documents/security/role-CMISAdmin.access"));
+	let allConstraints = accessDefinitions.constraints.concat(adminAccessDefinitions.constraints);
 	folder.children = folder.children.filter(e => {
 		let path = (folder.path + "/" + e.name).replaceAll("//", "/");
 		if (!path.startsWith("/")) {
@@ -50,7 +52,7 @@ function filterByAccessDefinitions(folder) {
 		if (path.endsWith("/")) {
 			path = path.substr(0, path.length - 1);
 		}
-		return hasAccessPermissions(accessDefinitions.constraints, path);
+		return hasAccessPermissions(allConstraints, path);
 	});
 }
 
