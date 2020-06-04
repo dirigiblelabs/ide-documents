@@ -65,11 +65,13 @@ function hasAccessPermissions(constraints, path) {
 		if (constraintPath.endsWith("/")) {
 			constraintPath = constraintPath.substr(0, constraintPath.length - 1);
 		}
-		if (path.length >= constraintPath.length && constraintPath.startsWith(path) && method && (method.toUpperCase() === "READ" || method === "*")) {
-			let roles = constraints[i].roles;
-			for (let j = 0; j < roles.length; j ++) {
-				if (!request.isUserInRole(roles[i])) {
-					return false;
+		if (path.length >= constraintPath.length && constraintPath.startsWith(path)) {
+			if (method !== null && method !== undefined && (method.toUpperCase() === "READ" || method === "*")) {				
+				let roles = constraints[i].roles;
+				for (let j = 0; j < roles.length; j ++) {
+					if (!request.isUserInRole(roles[i])) {
+						return false;
+					}
 				}
 			}
 		}
