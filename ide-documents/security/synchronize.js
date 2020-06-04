@@ -1,4 +1,4 @@
-var utils = require("ide-documents/security/utils");
+var utils = require("ide-documents/security/accessUtils");
 
 let accessDefinitions = utils.getAccessDefinitions();
 utils.updateAccessDefinitions(accessDefinitions);
