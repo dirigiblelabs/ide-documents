@@ -23,6 +23,9 @@ rs.service()
             filterByAccessDefinitions(result);
             response.println(JSON.stringify(result));
         })
+		.catch(function(ctx, error, request, response) {
+			printError(response, response.BAD_REQUEST, 4, error.message);
+		})
 		.post(function(ctx, request, response) {
 			if (!upload.isMultipartContent()) {
 				throw new Error("The request's content must be 'multipart'");
@@ -42,6 +45,9 @@ rs.service()
 			}
 			response.println(JSON.stringify(result));
 		})
+		.catch(function(ctx, error, request, response) {
+			printError(response, response.BAD_REQUEST, 4, error.message);
+		})
 		.put(function(ctx, request, response) {
 			let body = request.getJSON();
 			if (!(body.path && body.name)){
@@ -51,6 +57,9 @@ rs.service()
 			cmisObjectLib.renameObject(object, body.name);
 			response.setStatus(response.OK);
 			response.print(JSON.stringify(body.name));
+		})
+		.catch(function(ctx, error, request, response) {
+			printError(response, response.BAD_REQUEST, 4, error.message);
 		})
 		.delete(function(ctx, request, response) {
 			let forceDelete = ctx.queryParameters.force;
@@ -66,6 +75,9 @@ rs.service()
 			}
 			response.setStatus(response.NO_CONTENT);
 		})
+		.catch(function(ctx, error, request, response) {
+			printError(response, response.BAD_REQUEST, 4, error.message);
+		})
 	.resource("folder")
 		.post(function(ctx, request, response) {
 			let body = request.getJSON();
@@ -77,15 +89,24 @@ rs.service()
 			response.setStatus(response.CREATED);
 			response.print(JSON.stringify(result));
 		})
+		.catch(function(ctx, error, request, response) {
+			printError(response, response.BAD_REQUEST, 4, error.message);
+		})
 	.resource("zip")
 		.get(function(ctx, request, response) {
-			let path = ctx.queryParameters.path || "/";
+			let path = ctx.queryParameters.path;
+			if (!path){
+				throw new Error("Query parameter 'path' must be provided.");
+			}
             path = unescapePath(path);
 			let name = getNameFromPath(path);
 			let outputStream = response.getOutputStream();
 			response.setContentType("application/zip");
 			response.addHeader("Content-Disposition", "attachment;filename=\"" + name +".zip\"");
 			zipLib.makeZip(path, outputStream);
+		})
+		.catch(function(ctx, error, request, response) {
+			printError(response, response.BAD_REQUEST, 4, error.message);
 		})
 		.post(function(ctx, request, response) {
 			if (!upload.isMultipartContent()) {
@@ -99,6 +120,9 @@ rs.service()
 				result.push(zipLib.unpackZip(path, documents.get(i)));
 			}
 			response.println(JSON.stringify(result));
+		})
+		.catch(function(ctx, error, request, response) {
+			printError(response, response.BAD_REQUEST, 4, error.message);
 		})
 	.resource("image")
 		.post(function(ctx, request, response) {
@@ -124,11 +148,14 @@ rs.service()
 
 			response.println(JSON.stringify(result));
 		})
+		.catch(function(ctx, error, request, response) {
+			printError(response, response.BAD_REQUEST, 4, error.message);
+		})
 	.resource("preview")
 		.get(function(ctx, request, response) {
 			let path = request.getParameter('path');
 			if (!path) {
-				throw new Error("[Error] Documents Preview - Query parameter 'path' must be provided.");
+				throw new Error("Query parameter 'path' must be provided.");
 			}
 			path = unescapePath(path);
 			let document = documentLib.getDocument(path);
@@ -138,11 +165,14 @@ rs.service()
 			response.setContentType(contentType);
 			response.write(contentStream.getStream().readBytes());
 		})
+		.catch(function(ctx, error, request, response) {
+			printError(response, response.BAD_REQUEST, 4, error.message);
+		})
 	.resource("download")
 		.get(function(ctx, request, response) {
 			let path = request.getParameter('path');
 			if (!path) {
-				throw new Error("[Error] Documents Download - Query parameter 'path' must be provided.");
+				throw new Error("Query parameter 'path' must be provided.");
 			}
 			path = unescapePath(path);
 			let document = documentLib.getDocument(path);
@@ -157,7 +187,22 @@ rs.service()
 			response.addHeader("Content-Disposition", "attachment;filename=\"" + name + "\"");
 			streams.copy(contentStream.getStream(), response.getOutputStream());
 		})
+		.catch(function(ctx, error, request, response) {
+			printError(response, response.BAD_REQUEST, 4, error.message);
+		})
 .execute();
+
+function printError(response, httpCode, errCode, errMessage) {
+	var body = {
+		err: {
+			code: errCode,
+			message: errMessage
+		}
+	};
+    console.error(JSON.stringify(body));
+    response.setStatus(httpCode);
+    response.println(JSON.stringify(body));
+}
 
 function filterByAccessDefinitions(folder) {
 	let accessDefinitions = JSON.parse(registry.getText("ide-documents/security/roles.access"));
