@@ -38,7 +38,7 @@ angular
 	$httpProvider.interceptors.push('httpRequestInterceptor');
 }])
 .controller('DocServiceCtrl', ['$scope', '$http', 'FileUploader', function($scope, $http, FileUploader) {
-	var rootPath = '../../js/ide-documents/api';
+	var rootPath = '/services/v4/js/ide-documents/api';
 	var managePath = rootPath + '/manage';
 	var createPath = managePath + '/create';
 	$scope.createDocPath = createPath + '/document';

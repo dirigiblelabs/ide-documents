@@ -10,11 +10,11 @@
  */
 exports.getView = function () {
     return {
-        'id': 'documents-constraints',
-        'name': 'Constraints',
-        'factory': 'frame',
-        'region': 'center-bottom',
-        'label': 'Constraints',
-        'link': '../ide-documents/constraints.html'
+        id: "documents-constraints",
+        name: "Constraints",
+        factory: "frame",
+        region: "center-bottom",
+        label: "Constraints",
+        link: "../ide-documents/ui/constraints/index.html"
     };
 }

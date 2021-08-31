@@ -8,13 +8,11 @@
  * Contributors:
  *   SAP - initial API and implementation
  */
-exports.getView = function() {
+exports.getPerspective = function () {
 	return {
-			'id': 'documents',
-			'name': 'Documents',
-			'factory': 'frame',
-			'region': 'center-bottom',
-			'label': 'Documents',
-			'link': '../ide-documents/docs.html'
+		name: "Documents",
+		link: "../ide-documents/index.html",
+		order: "150",
+		image: "clipboard"
 	};
-}
+};

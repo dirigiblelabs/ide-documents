@@ -8,18 +8,17 @@
  * Contributors:
  *   SAP - initial API and implementation
  */
-exports.getMenu = function() {
+exports.getMenu = function () {
 	return {
-			'name': 'Documents',
-			'link': '#',
-			'order': '150',
-			'items':[
-				{
-					'name': 'Properties',
-					'link': '#',
-					'order': '160'
-				}
-			]
-		};
-	return menu;
+		name: "Documents",
+		link: "#",
+		order: "150",
+		items: [
+			{
+				name: "Properties",
+				link: "#",
+				order: "160"
+			}
+		]
+	};
 }
