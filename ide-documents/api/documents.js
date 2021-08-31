@@ -8,6 +8,7 @@ let zipLib = require("ide-documents/api/lib/zip");
 let folderLib = require("ide-documents/api/lib/folder");
 let documentLib = require("ide-documents/api/lib/document");
 let cmisObjectLib = require("ide-documents/api/lib/object");
+let imageLib = require("ide-documents/api/lib/image");
 
 let contentTypeHandler = require("ide-documents/utils/content-type-handler");
 let {replaceAll, unescapePath, getNameFromPath} = require("ide-documents/utils/string");
@@ -97,6 +98,30 @@ rs.service()
 			for (let i = 0; i < documents.size(); i ++){
 				result.push(zipLib.unpackZip(path, documents.get(i)));
 			}
+			response.println(JSON.stringify(result));
+		})
+	.resource("image")
+		.post(function(ctx, request, response) {
+			if (!upload.isMultipartContent()) {
+				throw new Error("The request's content must be 'multipart'");
+			}
+			let path = ctx.queryParameters.path || "/";
+            path = unescapePath(path);
+			let documents = upload.parseRequest();
+			let result = [];
+			let width = ctx.queryParameters.width;
+			let height = ctx.queryParameters.height;
+
+			for (let i = 0; i < documents.size(); i ++) {
+				let folder = folderLib.getFolder(path);
+				let name = documents.get(i).getName();
+				if (width && height && name){
+					result.push(imageLib.uploadImageWithResize(folder, name, documents.get(i), parseInt(width), parseInt(height)));
+				} else {
+					result.push(documentLib.uploadDocument(folder, documents.get(i)));
+				}
+			}
+
 			response.println(JSON.stringify(result));
 		})
 	.resource("preview")
