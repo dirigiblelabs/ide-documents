@@ -52,9 +52,8 @@ angular
 	var readDocPath = readPath + '/document';
 	$scope.downloadPath = readDocPath + '/download';
 	$scope.previewPath = readDocPath + '/preview';
-	var readFolderPath = readPath + '/folder';
-	var listFolderPath = readFolderPath + '/list';
-	$scope.downloadZipPath = readFolderPath + '/zip';
+	var listFolderPath = "/services/v4/js/ide-documents/api/documents.js";
+	$scope.downloadZipPath = "/services/v4/js/ide-documents/api/documents.js/zip";
 
 	$scope.breadcrumbs = new Breadcrumbs();
 	
