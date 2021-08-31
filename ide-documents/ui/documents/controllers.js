@@ -42,7 +42,6 @@ angular
 	var managePath = rootPath + '/manage';
 	var createPath = managePath + '/create';
 	$scope.createDocPath = createPath + '/document';
-	var zipUploadPath = createPath + '/zip';
 	var createFolderPath = createPath + '/folder';
 
 	const listFolderPath = "/services/v4/js/ide-documents/api/documents.js";
@@ -51,6 +50,7 @@ angular
 	$scope.downloadPath = "/services/v4/js/ide-documents/api/documents.js/download"
 	$scope.previewPath = "/services/v4/js/ide-documents/api/documents.js/preview";
 	$scope.downloadZipPath = "/services/v4/js/ide-documents/api/documents.js/zip";
+	const zipUploadPath = "/services/v4/js/ide-documents/api/documents.js/zip";
 
 	$scope.breadcrumbs = new Breadcrumbs();
 

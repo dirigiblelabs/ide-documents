@@ -2,6 +2,7 @@ let rs = require("http/v4/rs");
 let user = require("security/v4/user");
 let registry = require("platform/v4/registry");
 let streams = require("io/v4/streams");
+let upload = require('http/v4/upload');
 
 let zipLib = require("ide-documents/api/lib/zip");
 let folderLib = require("ide-documents/api/lib/folder");
@@ -54,6 +55,19 @@ rs.service()
 			response.setContentType("application/zip");
 			response.addHeader("Content-Disposition", "attachment;filename=\"" + name +".zip\"");
 			zipLib.makeZip(path, outputStream);
+		})
+		.post(function(ctx, request, response) {
+			if (!upload.isMultipartContent()) {
+				throw new Error("The request's content must be 'multipart'");
+			}
+			let path = ctx.queryParameters.path || "/";
+            path = unescapePath(path);
+			var documents = upload.parseRequest();
+			var result = [];
+			for (let i = 0; i < documents.size(); i ++){
+				result.push(zipLib.unpackZip(path, documents.get(i)));
+			}
+			response.println(JSON.stringify(result));
 		})
 	.resource("preview")
 		.get(function(ctx, request, response) {
