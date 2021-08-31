@@ -22,6 +22,25 @@ rs.service()
             filterByAccessDefinitions(result);
             response.println(JSON.stringify(result));
         })
+		.post(function(ctx, request, response) {
+			if (!upload.isMultipartContent()) {
+				throw new Error("The request's content must be 'multipart'");
+			}
+			let path = ctx.queryParameters.path || "/";
+            path = unescapePath(path);
+			let documents = upload.parseRequest();
+			let result = [];
+			let overwrite = ctx.queryParameters.overwrite || false;
+			for (let i = 0 ; i < documents.size(); i ++) {
+				let folder = folderLib.getFolder(path);
+				if (overwrite){
+					result.push(documentLib.uploadDocumentOverwrite(folder, documents.get(i)));
+				} else {
+					result.push(documentLib.uploadDocument(folder, documents.get(i)));		
+				}
+			}
+			response.println(JSON.stringify(result));
+		})
 		.put(function(ctx, request, response) {
 			let body = request.getJSON();
 			if (!(body.path && body.name)){
@@ -62,8 +81,8 @@ rs.service()
 			}
 			let path = ctx.queryParameters.path || "/";
             path = unescapePath(path);
-			var documents = upload.parseRequest();
-			var result = [];
+			let documents = upload.parseRequest();
+			let result = [];
 			for (let i = 0; i < documents.size(); i ++){
 				result.push(zipLib.unpackZip(path, documents.get(i)));
 			}

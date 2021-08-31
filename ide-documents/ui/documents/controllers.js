@@ -41,15 +41,17 @@ angular
 	var rootPath = '/services/v4/js/ide-documents/api';
 	var managePath = rootPath + '/manage';
 	var createPath = managePath + '/create';
-	$scope.createDocPath = createPath + '/document';
 	var createFolderPath = createPath + '/folder';
 
 	const listFolderPath = "/services/v4/js/ide-documents/api/documents.js";
+	const createDocPath = "/services/v4/js/ide-documents/api/documents.js";
 	const renamePath = "/services/v4/js/ide-documents/api/documents.js";
 	const removePath = "/services/v4/js/ide-documents/api/documents.js";
+
 	$scope.downloadPath = "/services/v4/js/ide-documents/api/documents.js/download"
 	$scope.previewPath = "/services/v4/js/ide-documents/api/documents.js/preview";
 	$scope.downloadZipPath = "/services/v4/js/ide-documents/api/documents.js/zip";
+
 	const zipUploadPath = "/services/v4/js/ide-documents/api/documents.js/zip";
 
 	$scope.breadcrumbs = new Breadcrumbs();
@@ -71,7 +73,7 @@ angular
 	}
 	
 	function setUploaderFolder(folderPath){
-		$scope.uploader.url = $scope.createDocPath + '?path=' + folderPath;
+		$scope.uploader.url = createDocPath + '?path=' + folderPath;
 	}
 	
 	function setCurrentFolder(folderData){
@@ -199,7 +201,7 @@ angular
 	// FILE UPLOADER
 	
     uploader = $scope.uploader = new FileUploader({
-        url: $scope.createDocPath
+        url: createDocPath
     });
     
 	uploader.headers['X-Requested-With'] = 'Fetch';
