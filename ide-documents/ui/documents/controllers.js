@@ -47,16 +47,14 @@ angular
 	var updatePath = managePath + '/update';
 	var renamePath = updatePath + '/rename';
 	$scope.removePath = managePath + '/remove';
-	
-	var readPath = rootPath + '/read';
-	var readDocPath = readPath + '/document';
-	$scope.downloadPath = readDocPath + '/download';
-	$scope.previewPath = readDocPath + '/preview';
+
 	var listFolderPath = "/services/v4/js/ide-documents/api/documents.js";
+	$scope.downloadPath = "/services/v4/js/ide-documents/api/documents.js/download"
+	$scope.previewPath = "/services/v4/js/ide-documents/api/documents.js/preview";
 	$scope.downloadZipPath = "/services/v4/js/ide-documents/api/documents.js/zip";
 
 	$scope.breadcrumbs = new Breadcrumbs();
-	
+
 	function getFolder(folderPath){
 		var requestUrl = listFolderPath;
 		if(folderPath){

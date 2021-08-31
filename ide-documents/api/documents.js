@@ -1,10 +1,13 @@
 let rs = require("http/v4/rs");
 let user = require("security/v4/user");
 let registry = require("platform/v4/registry");
+let streams = require("io/v4/streams");
 
 let zipLib = require("ide-documents/api/lib/zip");
 let folderLib = require("ide-documents/api/lib/folder");
+let documentLib = require("ide-documents/api/lib/document");
 
+let contentTypeHandler = require("ide-documents/utils/content-type-handler");
 let {replaceAll, unescapePath, getNameFromPath} = require("ide-documents/utils/string");
 
 rs.service()
@@ -26,6 +29,39 @@ rs.service()
 			response.setContentType("application/zip");
 			response.addHeader("Content-Disposition", "attachment;filename=\"" + name +".zip\"");
 			zipLib.makeZip(path, outputStream);
+		})
+	.resource("preview")
+		.get(function(ctx, request, response) {
+			let path = request.getParameter('path');
+			if (!path){
+				throw new Error("[Error] Documents Preview - Query parameter 'path' must be provided.");
+			}
+			path = unescapePath(path);
+			var document = documentLib.getDocument(path);
+			var contentStream = documentLib.getDocumentStream(document);
+			var contentType = contentStream.getMimeType();
+
+			response.setContentType(contentType);
+			response.write(contentStream.getStream().readBytes());
+		})
+	.resource("download")
+		.get(function(ctx, request, response) {
+			let path = request.getParameter('path');
+			if (!path){
+				throw new Error("[Error] Documents Download - Query parameter 'path' must be provided.");
+			}
+			path = unescapePath(path);
+			let document = documentLib.getDocument(path);
+			let nameAndStream = documentLib.getDocNameAndStream(document);
+			let name = nameAndStream[0];
+			let contentStream = nameAndStream[1];
+			let contentType = contentStream.getMimeType();
+
+			contentType = contentTypeHandler.getContentTypeBeforeDownload(name, contentType);
+
+			response.setContentType(contentType);
+			response.addHeader("Content-Disposition", "attachment;filename=\"" + name + "\"");
+			streams.copy(contentStream.getStream(), response.getOutputStream());
 		})
 .execute();
 
