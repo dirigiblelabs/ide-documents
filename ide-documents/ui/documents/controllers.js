@@ -38,26 +38,18 @@ angular
 	$httpProvider.interceptors.push('httpRequestInterceptor');
 }])
 .controller('DocServiceCtrl', ['$scope', '$http', 'FileUploader', function($scope, $http, FileUploader) {
-	var rootPath = '/services/v4/js/ide-documents/api';
-	var managePath = rootPath + '/manage';
-	var createPath = managePath + '/create';
-	var createFolderPath = createPath + '/folder';
-
-	const listFolderPath = "/services/v4/js/ide-documents/api/documents.js";
-	const createDocPath = "/services/v4/js/ide-documents/api/documents.js";
-	const renamePath = "/services/v4/js/ide-documents/api/documents.js";
-	const removePath = "/services/v4/js/ide-documents/api/documents.js";
+	const documentsApi = "/services/v4/js/ide-documents/api/documents.js";
+	const folderApi = "/services/v4/js/ide-documents/api/documents.js/folder";
+	const zipApi = "/services/v4/js/ide-documents/api/documents.js/zip";
 
 	$scope.downloadPath = "/services/v4/js/ide-documents/api/documents.js/download"
 	$scope.previewPath = "/services/v4/js/ide-documents/api/documents.js/preview";
-	$scope.downloadZipPath = "/services/v4/js/ide-documents/api/documents.js/zip";
-
-	const zipUploadPath = "/services/v4/js/ide-documents/api/documents.js/zip";
+	$scope.downloadZipPath = zipApi;
 
 	$scope.breadcrumbs = new Breadcrumbs();
 
 	function getFolder(folderPath){
-		var requestUrl = listFolderPath;
+		var requestUrl = documentsApi;
 		if(folderPath){
 			requestUrl += '?path=' + folderPath;
 		}
@@ -73,7 +65,7 @@ angular
 	}
 	
 	function setUploaderFolder(folderPath){
-		$scope.uploader.url = createDocPath + '?path=' + folderPath;
+		$scope.uploader.url = documentsApi + '?path=' + folderPath;
 	}
 	
 	function setCurrentFolder(folderData){
@@ -118,7 +110,7 @@ angular
 	
 	$scope.createFolder = function(newFolderName){
 		var postData = { parentFolder: $scope.folder.path, name: newFolderName };
-		$http.post(createFolderPath, postData)
+		$http.post(folderApi, postData)
 		.success(function(){
 			$('#newFolderModal').modal('toggle');
 			refreshFolder();
@@ -141,7 +133,7 @@ angular
 	
 	$scope.deleteItems = function(forceDelete){
 		var pathsToDelete = $scope.itemsToDelete.map(function(item){return $scope.getFullPath(item.name);});
-		var url = removePath + (forceDelete ? "?force=true" : "");
+		var url = documentsApi + (forceDelete ? "?force=true" : "");
 		$http({ url: url, 
                 method: 'DELETE', 
                 data: pathsToDelete, 
@@ -184,7 +176,7 @@ angular
 	};
 	
 	$scope.renameItem = function(itemName, newName){
-		$http({ url: renamePath, 
+		$http({ url: documentsApi, 
                 method: 'PUT', 
                 data: { path: $scope.getFullPath(itemName), name: newName },
                 headers: {"Content-Type": "application/json;charset=utf-8"}
@@ -201,7 +193,7 @@ angular
 	// FILE UPLOADER
 	
     uploader = $scope.uploader = new FileUploader({
-        url: createDocPath
+        url: documentsApi
     });
     
 	uploader.headers['X-Requested-With'] = 'Fetch';
@@ -229,7 +221,7 @@ angular
     uploader.onBeforeUploadItem = function(item) {
 //        console.info('onBeforeUploadItem', item);
 		if ($scope.unpackZips && item.file.name.endsWith(".zip")) {
-			item.url = zipUploadPath + "?path=" + $scope.folder.path;
+			item.url = zipApi + "?path=" + $scope.folder.path;
 		}
 		
 		if ($scope.overwrite) {

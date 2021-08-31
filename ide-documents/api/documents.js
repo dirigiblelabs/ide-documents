@@ -65,6 +65,17 @@ rs.service()
 			}
 			response.setStatus(response.NO_CONTENT);
 		})
+	.resource("folder")
+		.post(function(ctx, request, response) {
+			let body = request.getJSON();
+			if (!(body.parentFolder && body.name)){
+				throw new Error("Request body must contain 'parentFolder' and 'name'");
+			}
+			let folder = folderLib.getFolderOrRoot(body.parentFolder);
+			let result = folderLib.createFolder(folder, body.name);
+			response.setStatus(response.CREATED);
+			response.print(JSON.stringify(result));
+		})
 	.resource("zip")
 		.get(function(ctx, request, response) {
 			let path = ctx.queryParameters.path || "/";
