@@ -6,6 +6,7 @@ let streams = require("io/v4/streams");
 let zipLib = require("ide-documents/api/lib/zip");
 let folderLib = require("ide-documents/api/lib/folder");
 let documentLib = require("ide-documents/api/lib/document");
+let cmisObjectLib = require("ide-documents/api/lib/object");
 
 let contentTypeHandler = require("ide-documents/utils/content-type-handler");
 let {replaceAll, unescapePath, getNameFromPath} = require("ide-documents/utils/string");
@@ -20,6 +21,30 @@ rs.service()
             filterByAccessDefinitions(result);
             response.println(JSON.stringify(result));
         })
+		.put(function(ctx, request, response) {
+			let body = request.getJSON();
+			if (!(body.path && body.name)){
+				throw new Error("Request body must contain 'path' and 'name'");
+			}
+			let object = cmisObjectLib.getObject(body.path);
+			cmisObjectLib.renameObject(object, body.name);
+			response.setStatus(response.OK);
+			response.print(JSON.stringify(body.name));
+		})
+		.delete(function(ctx, request, response) {
+			let forceDelete = ctx.queryParameters.force;
+			let objects = request.getJSON();
+			for (let i in objects) {
+				let object = cmisObjectLib.getObject(objects[i]);
+				let isFolder = object.getType().getId() === 'cmis:folder';
+				if (isFolder && forceDelete === 'true') {
+					folderLib.deleteTree(object);
+				} else {
+					cmisObjectLib.deleteObject(object);
+				}
+			}
+			response.setStatus(response.NO_CONTENT);
+		})
 	.resource("zip")
 		.get(function(ctx, request, response) {
 			let path = ctx.queryParameters.path || "/";
@@ -33,13 +58,13 @@ rs.service()
 	.resource("preview")
 		.get(function(ctx, request, response) {
 			let path = request.getParameter('path');
-			if (!path){
+			if (!path) {
 				throw new Error("[Error] Documents Preview - Query parameter 'path' must be provided.");
 			}
 			path = unescapePath(path);
-			var document = documentLib.getDocument(path);
-			var contentStream = documentLib.getDocumentStream(document);
-			var contentType = contentStream.getMimeType();
+			let document = documentLib.getDocument(path);
+			let contentStream = documentLib.getDocumentStream(document);
+			let contentType = contentStream.getMimeType();
 
 			response.setContentType(contentType);
 			response.write(contentStream.getStream().readBytes());
@@ -47,7 +72,7 @@ rs.service()
 	.resource("download")
 		.get(function(ctx, request, response) {
 			let path = request.getParameter('path');
-			if (!path){
+			if (!path) {
 				throw new Error("[Error] Documents Download - Query parameter 'path' must be provided.");
 			}
 			path = unescapePath(path);

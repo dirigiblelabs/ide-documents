@@ -44,11 +44,10 @@ angular
 	$scope.createDocPath = createPath + '/document';
 	var zipUploadPath = createPath + '/zip';
 	var createFolderPath = createPath + '/folder';
-	var updatePath = managePath + '/update';
-	var renamePath = updatePath + '/rename';
-	$scope.removePath = managePath + '/remove';
 
-	var listFolderPath = "/services/v4/js/ide-documents/api/documents.js";
+	const listFolderPath = "/services/v4/js/ide-documents/api/documents.js";
+	const renamePath = "/services/v4/js/ide-documents/api/documents.js";
+	const removePath = "/services/v4/js/ide-documents/api/documents.js";
 	$scope.downloadPath = "/services/v4/js/ide-documents/api/documents.js/download"
 	$scope.previewPath = "/services/v4/js/ide-documents/api/documents.js/preview";
 	$scope.downloadZipPath = "/services/v4/js/ide-documents/api/documents.js/zip";
@@ -140,7 +139,7 @@ angular
 	
 	$scope.deleteItems = function(forceDelete){
 		var pathsToDelete = $scope.itemsToDelete.map(function(item){return $scope.getFullPath(item.name);});
-		var url = $scope.removePath + (forceDelete ? "?force=true" : "");
+		var url = removePath + (forceDelete ? "?force=true" : "");
 		$http({ url: url, 
                 method: 'DELETE', 
                 data: pathsToDelete, 
