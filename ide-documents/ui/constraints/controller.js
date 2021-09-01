@@ -45,9 +45,6 @@ angular.module('page')
 	};
 
 	$scope.methods = [{
-		'key': '*',
-		'label': '*'
-	}, {
 		'key': 'READ',
 		'label': 'READ'
 	}, {
@@ -97,6 +94,7 @@ angular.module('page')
 		if (!exists) {
 			$scope.access.constraints.push($scope.entity);
 			$scope.save();
+			sortAccessConstraints();
 			toggleEntityModal();
 		}
 	};
@@ -161,10 +159,14 @@ angular.module('page')
 		$scope.access.constraints.forEach(function (constraint) {
 			constraint.rolesLine = constraint.roles.join();
 		});
-
+		sortAccessConstraints();
 	}
 
 	load();
+
+	function sortAccessConstraints() {
+		$scope.access.constraints = $scope.access.constraints.sort((x, y) => x.path > y.path ? 1 : -1);
+	}
 
 	function saveContents(text) {
 		var xhr = new XMLHttpRequest();
