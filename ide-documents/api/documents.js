@@ -4,6 +4,8 @@ let registry = require("platform/v4/registry");
 let streams = require("io/v4/streams");
 let upload = require('http/v4/upload');
 
+let documentsProcessor = require("ide-documents/api/processors/documentsProcessor");
+
 let zipUtils = require("ide-documents/utils/cmis/zip");
 let folderUtils = require("ide-documents/utils/cmis/folder");
 let documentUtils = require("ide-documents/utils/cmis/document");
@@ -17,9 +19,9 @@ rs.service()
     .resource("")
         .get(function(ctx, request, response) {
             let path = unescapePath(ctx.queryParameters.path || "/");
-            let folder = folderUtils.getFolderOrRoot(path);
-            let result = folderUtils.readFolder(folder);
-            filterByAccessDefinitions(result);
+
+			let result = documentsProcessor.list(path);
+
             response.println(JSON.stringify(result));
         })
 		.catch(function(ctx, error, request, response) {
@@ -30,47 +32,36 @@ rs.service()
 				throw new Error("The request's content must be 'multipart'");
 			}
 			let path = unescapePath(ctx.queryParameters.path || "/");
-			let documents = upload.parseRequest();
-			let result = [];
 			let overwrite = ctx.queryParameters.overwrite || false;
-			for (let i = 0 ; i < documents.size(); i ++) {
-				let folder = folderUtils.getFolder(path);
-				if (overwrite){
-					result.push(documentUtils.uploadDocumentOverwrite(folder, documents.get(i)));
-				} else {
-					result.push(documentUtils.uploadDocument(folder, documents.get(i)));		
-				}
-			}
+			let documents = upload.parseRequest();
+
+			documentsProcessor.create(path, documents, overwrite);
+
 			response.println(JSON.stringify(result));
 		})
 		.catch(function(ctx, error, request, response) {
 			printError(response, response.BAD_REQUEST, 4, error.message);
 		})
 		.put(function(ctx, request, response) {
-			let body = request.getJSON();
-			if (!(body.path && body.name)){
+			let {path, name} = request.getJSON();
+			if (!(path && name)){
 				throw new Error("Request body must contain 'path' and 'name'");
 			}
-			let object = objectUtils.getObject(body.path);
-			objectUtils.renameObject(object, body.name);
+
+			documentsProcessor.rename(path, name);
+
 			response.setStatus(response.OK);
-			response.print(JSON.stringify(body.name));
+			response.print(JSON.stringify(name));
 		})
 		.catch(function(ctx, error, request, response) {
 			printError(response, response.BAD_REQUEST, 4, error.message);
 		})
 		.delete(function(ctx, request, response) {
-			let forceDelete = ctx.queryParameters.force;
+			let forceDelete = ctx.queryParameters.force === "true" ? true : false;
 			let objects = request.getJSON();
-			for (let i in objects) {
-				let object = objectUtils.getObject(objects[i]);
-				let isFolder = object.getType().getId() === 'cmis:folder';
-				if (isFolder && forceDelete === 'true') {
-					folderUtils.deleteTree(object);
-				} else {
-					objectUtils.deleteObject(object);
-				}
-			}
+
+			documentsProcessor.delete(objects, forceDelete);
+
 			response.setStatus(response.NO_CONTENT);
 		})
 		.catch(function(ctx, error, request, response) {
@@ -195,46 +186,4 @@ function printError(response, httpCode, errCode, errMessage) {
     console.error(JSON.stringify(body));
     response.setStatus(httpCode);
     response.println(JSON.stringify(body));
-}
-
-function filterByAccessDefinitions(folder) {
-	let accessDefinitions = JSON.parse(registry.getText("ide-documents/security/roles.access"));
-	folder.children = folder.children.filter(e => {
-		let path = replaceAll((folder.path + "/" + e.name), "//", "/");
-		if (path.startsWith("/__internal")) {
-			return false;
-		}
-		if (!path.startsWith("/")) {
-			path = "/" + path;
-		}
-		if (path.endsWith("/")) {
-			path = path.substr(0, path.length - 1);
-		}
-		return hasAccessPermissions(accessDefinitions.constraints, path);
-	});
-}
-
-function hasAccessPermissions(constraints, path) {
-	for (let i = 0; i < constraints.length; i ++) {
-		let method = constraints[i].method;
-		let constraintPath = constraints[i].path;
-		constraintPath = replaceAll(constraintPath, "//", "/");
-		if (!constraintPath.startsWith("/")) {
-			constraintPath = "/" + constraintPath;
-		}
-		if (constraintPath.endsWith("/")) {
-			constraintPath = constraintPath.substr(0, constraintPath.length - 1);
-		}
-		if (constraintPath.length === 0 || (path.length >= constraintPath.length && constraintPath.startsWith(path))) {
-			if (method !== null && method !== undefined && (method.toUpperCase() === "READ" || method === "*")) {				
-				let roles = constraints[i].roles;
-				for (let j = 0; j < roles.length; j ++) {
-					if (!user.isInRole(roles[j])) {
-						return false;
-					}
-				}
-			}
-		}
-	}
-	return true;
 }

@@ -1,6 +1,6 @@
-var accessUtils = require("ide-documents/security/accessUtils");
+var constraintsProcessor = require("ide-documents/api/processors/constraintsProcessor");
 
-let accessDefinitions = accessUtils.getAccessDefinitions();
-accessUtils.updateAccessDefinitions(accessDefinitions);
+let accessDefinitions = constraintsProcessor.getAccessDefinitions();
+constraintsProcessor.updateAccessDefinitions(accessDefinitions);
 
 console.log("Access Definitions successfully synchronized by [ide-documents-security] Job");

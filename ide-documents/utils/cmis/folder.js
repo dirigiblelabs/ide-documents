@@ -8,8 +8,8 @@
  * Contributors:
  *   SAP - initial API and implementation
  */
-var cmis = require('cms/v4/cmis');
-var cmisObjectLib = require("ide-documents/api/lib/object");
+var cmis = require("cms/v4/cmis");
+var objectUtils = require("ide-documents/utils/cmis/object");
 
 var cmisSession = cmis.getSession();
 
@@ -69,7 +69,7 @@ exports.getFolderOrRoot = function(folderPath){
 };
 
 exports.getFolder = function(path){
-	return cmisObjectLib.getObject(path);
+	return objectUtils.getObject(path);
 };
 
 exports.deleteTree = function(folder){
