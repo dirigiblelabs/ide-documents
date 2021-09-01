@@ -4,11 +4,11 @@ let registry = require("platform/v4/registry");
 let streams = require("io/v4/streams");
 let upload = require('http/v4/upload');
 
-let zipLib = require("ide-documents/api/lib/zip");
-let folderLib = require("ide-documents/api/lib/folder");
-let documentLib = require("ide-documents/api/lib/document");
-let cmisObjectLib = require("ide-documents/api/lib/object");
-let imageLib = require("ide-documents/api/lib/image");
+let zipUtils = require("ide-documents/utils/cmis/zip");
+let folderUtils = require("ide-documents/utils/cmis/folder");
+let documentUtils = require("ide-documents/utils/cmis/document");
+let objectUtils = require("ide-documents/utils/cmis/object");
+let imageUtils = require("ide-documents/utils/cmis/image");
 
 let contentTypeHandler = require("ide-documents/utils/content-type-handler");
 let {replaceAll, unescapePath, getNameFromPath} = require("ide-documents/utils/string");
@@ -18,8 +18,8 @@ rs.service()
         .get(function(ctx, request, response) {
             let path = ctx.queryParameters.path || "/";
             path = unescapePath(path);
-            let folder = folderLib.getFolderOrRoot(path);
-            let result = folderLib.readFolder(folder);
+            let folder = folderUtils.getFolderOrRoot(path);
+            let result = folderUtils.readFolder(folder);
             filterByAccessDefinitions(result);
             response.println(JSON.stringify(result));
         })
@@ -36,11 +36,11 @@ rs.service()
 			let result = [];
 			let overwrite = ctx.queryParameters.overwrite || false;
 			for (let i = 0 ; i < documents.size(); i ++) {
-				let folder = folderLib.getFolder(path);
+				let folder = folderUtils.getFolder(path);
 				if (overwrite){
-					result.push(documentLib.uploadDocumentOverwrite(folder, documents.get(i)));
+					result.push(documentUtils.uploadDocumentOverwrite(folder, documents.get(i)));
 				} else {
-					result.push(documentLib.uploadDocument(folder, documents.get(i)));		
+					result.push(documentUtils.uploadDocument(folder, documents.get(i)));		
 				}
 			}
 			response.println(JSON.stringify(result));
@@ -53,8 +53,8 @@ rs.service()
 			if (!(body.path && body.name)){
 				throw new Error("Request body must contain 'path' and 'name'");
 			}
-			let object = cmisObjectLib.getObject(body.path);
-			cmisObjectLib.renameObject(object, body.name);
+			let object = objectUtils.getObject(body.path);
+			objectUtils.renameObject(object, body.name);
 			response.setStatus(response.OK);
 			response.print(JSON.stringify(body.name));
 		})
@@ -65,12 +65,12 @@ rs.service()
 			let forceDelete = ctx.queryParameters.force;
 			let objects = request.getJSON();
 			for (let i in objects) {
-				let object = cmisObjectLib.getObject(objects[i]);
+				let object = objectUtils.getObject(objects[i]);
 				let isFolder = object.getType().getId() === 'cmis:folder';
 				if (isFolder && forceDelete === 'true') {
-					folderLib.deleteTree(object);
+					folderUtils.deleteTree(object);
 				} else {
-					cmisObjectLib.deleteObject(object);
+					objectUtils.deleteObject(object);
 				}
 			}
 			response.setStatus(response.NO_CONTENT);
@@ -84,8 +84,8 @@ rs.service()
 			if (!(body.parentFolder && body.name)){
 				throw new Error("Request body must contain 'parentFolder' and 'name'");
 			}
-			let folder = folderLib.getFolderOrRoot(body.parentFolder);
-			let result = folderLib.createFolder(folder, body.name);
+			let folder = folderUtils.getFolderOrRoot(body.parentFolder);
+			let result = folderUtils.createFolder(folder, body.name);
 			response.setStatus(response.CREATED);
 			response.print(JSON.stringify(result));
 		})
@@ -103,7 +103,7 @@ rs.service()
 			let outputStream = response.getOutputStream();
 			response.setContentType("application/zip");
 			response.addHeader("Content-Disposition", "attachment;filename=\"" + name +".zip\"");
-			zipLib.makeZip(path, outputStream);
+			zipUtils.makeZip(path, outputStream);
 		})
 		.catch(function(ctx, error, request, response) {
 			printError(response, response.BAD_REQUEST, 4, error.message);
@@ -117,7 +117,7 @@ rs.service()
 			let documents = upload.parseRequest();
 			let result = [];
 			for (let i = 0; i < documents.size(); i ++){
-				result.push(zipLib.unpackZip(path, documents.get(i)));
+				result.push(zipUtils.unpackZip(path, documents.get(i)));
 			}
 			response.println(JSON.stringify(result));
 		})
@@ -137,12 +137,12 @@ rs.service()
 			let height = ctx.queryParameters.height;
 
 			for (let i = 0; i < documents.size(); i ++) {
-				let folder = folderLib.getFolder(path);
+				let folder = folderUtils.getFolder(path);
 				let name = documents.get(i).getName();
 				if (width && height && name){
-					result.push(imageLib.uploadImageWithResize(folder, name, documents.get(i), parseInt(width), parseInt(height)));
+					result.push(imageUtils.uploadImageWithResize(folder, name, documents.get(i), parseInt(width), parseInt(height)));
 				} else {
-					result.push(documentLib.uploadDocument(folder, documents.get(i)));
+					result.push(documentUtils.uploadDocument(folder, documents.get(i)));
 				}
 			}
 
@@ -158,8 +158,8 @@ rs.service()
 				throw new Error("Query parameter 'path' must be provided.");
 			}
 			path = unescapePath(path);
-			let document = documentLib.getDocument(path);
-			let contentStream = documentLib.getDocumentStream(document);
+			let document = documentUtils.getDocument(path);
+			let contentStream = documentUtils.getDocumentStream(document);
 			let contentType = contentStream.getMimeType();
 
 			response.setContentType(contentType);
@@ -175,8 +175,8 @@ rs.service()
 				throw new Error("Query parameter 'path' must be provided.");
 			}
 			path = unescapePath(path);
-			let document = documentLib.getDocument(path);
-			let nameAndStream = documentLib.getDocNameAndStream(document);
+			let document = documentUtils.getDocument(path);
+			let nameAndStream = documentUtils.getDocNameAndStream(document);
 			let name = nameAndStream[0];
 			let contentStream = nameAndStream[1];
 			let contentType = contentStream.getMimeType();
