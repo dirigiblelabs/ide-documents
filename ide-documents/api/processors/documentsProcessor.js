@@ -1,6 +1,22 @@
 let objectUtils = require("ide-documents/utils/cmis/object");
 let folderUtils = require("ide-documents/utils/cmis/folder");
 let documentUtils = require("ide-documents/utils/cmis/document");
+let contentTypeHandler = require("ide-documents/utils/content-type-handler");
+
+exports.get = function(path) {
+	console.warn("DocumentsProcessor.get()----");
+	let document = documentUtils.getDocument(path);
+	let nameAndStream = documentUtils.getDocNameAndStream(document);
+	let contentStream = nameAndStream[1];
+	let contentType = contentStream.getMimeType();
+
+	let result = {
+		name: nameAndStream[0],
+		content: nameAndStream[1],
+		contentType: contentTypeHandler.getContentTypeBeforeDownload(nameAndStream[0], contentType)
+	};
+	return result;
+};
 
 exports.list = function(path) {
     let folder = folderUtils.getFolderOrRoot(path);
@@ -19,6 +35,12 @@ exports.create = function(path, documents, overwrite) {
 			result.push(documentUtils.uploadDocument(folder, documents.get(i)));		
 		}
 	}
+	return result;
+};
+
+exports.createFolder = function(path, name) {
+	let folder = folderUtils.getFolderOrRoot(path);
+	let result = folderUtils.createFolder(folder, name);
 	return result;
 };
 

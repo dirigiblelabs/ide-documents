@@ -5,14 +5,10 @@ let streams = require("io/v4/streams");
 let upload = require('http/v4/upload');
 
 let documentsProcessor = require("ide-documents/api/processors/documentsProcessor");
+let imageProcessor = require("ide-documents/api/processors/imageProcessor");
 
 let zipUtils = require("ide-documents/utils/cmis/zip");
-let folderUtils = require("ide-documents/utils/cmis/folder");
-let documentUtils = require("ide-documents/utils/cmis/document");
-let objectUtils = require("ide-documents/utils/cmis/object");
-let imageUtils = require("ide-documents/utils/cmis/image");
 
-let contentTypeHandler = require("ide-documents/utils/content-type-handler");
 let {replaceAll, unescapePath, getNameFromPath} = require("ide-documents/utils/string");
 
 rs.service()
@@ -35,7 +31,7 @@ rs.service()
 			let overwrite = ctx.queryParameters.overwrite || false;
 			let documents = upload.parseRequest();
 
-			documentsProcessor.create(path, documents, overwrite);
+			let result = documentsProcessor.create(path, documents, overwrite);
 
 			response.println(JSON.stringify(result));
 		})
@@ -69,12 +65,13 @@ rs.service()
 		})
 	.resource("folder")
 		.post(function(ctx, request, response) {
-			let body = request.getJSON();
-			if (!(body.parentFolder && body.name)){
+			let {parentFolder, name} = request.getJSON();
+			if (!(parentFolder && name)){
 				throw new Error("Request body must contain 'parentFolder' and 'name'");
 			}
-			let folder = folderUtils.getFolderOrRoot(body.parentFolder);
-			let result = folderUtils.createFolder(folder, body.name);
+
+			let result = documentsProcessor.createFolder(parentFolder, name);
+
 			response.setStatus(response.CREATED);
 			response.print(JSON.stringify(result));
 		})
@@ -117,20 +114,11 @@ rs.service()
 				throw new Error("The request's content must be 'multipart'");
 			}
 			let path = unescapePath(ctx.queryParameters.path || "/");
-			let documents = upload.parseRequest();
-			let result = [];
 			let width = ctx.queryParameters.width;
 			let height = ctx.queryParameters.height;
+			let documents = upload.parseRequest();
 
-			for (let i = 0; i < documents.size(); i ++) {
-				let folder = folderUtils.getFolder(path);
-				let name = documents.get(i).getName();
-				if (width && height && name){
-					result.push(imageUtils.uploadImageWithResize(folder, name, documents.get(i), parseInt(width), parseInt(height)));
-				} else {
-					result.push(documentUtils.uploadDocument(folder, documents.get(i)));
-				}
-			}
+			let result = imageProcessor.resize(path, documents, width, height);
 
 			response.println(JSON.stringify(result));
 		})
@@ -143,12 +131,11 @@ rs.service()
 				throw new Error("Query parameter 'path' must be provided.");
 			}
 			let path = unescapePath(ctx.queryParameters.path);
-			let document = documentUtils.getDocument(path);
-			let contentStream = documentUtils.getDocumentStream(document);
-			let contentType = contentStream.getMimeType();
 
-			response.setContentType(contentType);
-			response.write(contentStream.getStream().readBytes());
+			let document = documentsProcessor.get(path);
+
+			response.setContentType(document.contentType);
+			response.write(document.content.getStream().readBytes());
 		})
 		.catch(function(ctx, error, request, response) {
 			printError(response, response.BAD_REQUEST, 4, error.message);
@@ -159,17 +146,12 @@ rs.service()
 				throw new Error("Query parameter 'path' must be provided.");
 			}
 			let path = unescapePath(ctx.queryParameters.path);
-			let document = documentUtils.getDocument(path);
-			let nameAndStream = documentUtils.getDocNameAndStream(document);
-			let name = nameAndStream[0];
-			let contentStream = nameAndStream[1];
-			let contentType = contentStream.getMimeType();
 
-			contentType = contentTypeHandler.getContentTypeBeforeDownload(name, contentType);
+			let document = documentsProcessor.get(path);
 
-			response.setContentType(contentType);
-			response.addHeader("Content-Disposition", "attachment;filename=\"" + name + "\"");
-			streams.copy(contentStream.getStream(), response.getOutputStream());
+			response.setContentType(document.contentType);
+			response.addHeader("Content-Disposition", "attachment;filename=\"" + document.name + "\"");
+			streams.copy(document.content.getStream(), response.getOutputStream());
 		})
 		.catch(function(ctx, error, request, response) {
 			printError(response, response.BAD_REQUEST, 4, error.message);
