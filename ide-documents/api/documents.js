@@ -16,8 +16,7 @@ let {replaceAll, unescapePath, getNameFromPath} = require("ide-documents/utils/s
 rs.service()
     .resource("")
         .get(function(ctx, request, response) {
-            let path = ctx.queryParameters.path || "/";
-            path = unescapePath(path);
+            let path = unescapePath(ctx.queryParameters.path || "/");
             let folder = folderUtils.getFolderOrRoot(path);
             let result = folderUtils.readFolder(folder);
             filterByAccessDefinitions(result);
@@ -30,8 +29,7 @@ rs.service()
 			if (!upload.isMultipartContent()) {
 				throw new Error("The request's content must be 'multipart'");
 			}
-			let path = ctx.queryParameters.path || "/";
-            path = unescapePath(path);
+			let path = unescapePath(ctx.queryParameters.path || "/");
 			let documents = upload.parseRequest();
 			let result = [];
 			let overwrite = ctx.queryParameters.overwrite || false;
@@ -93,12 +91,11 @@ rs.service()
 			printError(response, response.BAD_REQUEST, 4, error.message);
 		})
 	.resource("zip")
-		.get(function(ctx, request, response) {
-			let path = ctx.queryParameters.path;
-			if (!path){
+		.get(function(ctx, request, response) {;
+			if (!ctx.queryParameters.path){
 				throw new Error("Query parameter 'path' must be provided.");
 			}
-            path = unescapePath(path);
+            let path = unescapePath(ctx.queryParameters.path);
 			let name = getNameFromPath(path);
 			let outputStream = response.getOutputStream();
 			response.setContentType("application/zip");
@@ -112,8 +109,7 @@ rs.service()
 			if (!upload.isMultipartContent()) {
 				throw new Error("The request's content must be 'multipart'");
 			}
-			let path = ctx.queryParameters.path || "/";
-            path = unescapePath(path);
+			let path = unescapePath(ctx.queryParameters.path || "/");
 			let documents = upload.parseRequest();
 			let result = [];
 			for (let i = 0; i < documents.size(); i ++){
@@ -129,8 +125,7 @@ rs.service()
 			if (!upload.isMultipartContent()) {
 				throw new Error("The request's content must be 'multipart'");
 			}
-			let path = ctx.queryParameters.path || "/";
-            path = unescapePath(path);
+			let path = unescapePath(ctx.queryParameters.path || "/");
 			let documents = upload.parseRequest();
 			let result = [];
 			let width = ctx.queryParameters.width;
@@ -153,11 +148,10 @@ rs.service()
 		})
 	.resource("preview")
 		.get(function(ctx, request, response) {
-			let path = request.getParameter('path');
-			if (!path) {
+			if (!ctx.queryParameters.path) {
 				throw new Error("Query parameter 'path' must be provided.");
 			}
-			path = unescapePath(path);
+			let path = unescapePath(ctx.queryParameters.path);
 			let document = documentUtils.getDocument(path);
 			let contentStream = documentUtils.getDocumentStream(document);
 			let contentType = contentStream.getMimeType();
@@ -170,11 +164,10 @@ rs.service()
 		})
 	.resource("download")
 		.get(function(ctx, request, response) {
-			let path = request.getParameter('path');
-			if (!path) {
+			if (!ctx.queryParameters.path) {
 				throw new Error("Query parameter 'path' must be provided.");
 			}
-			path = unescapePath(path);
+			let path = unescapePath(ctx.queryParameters.path);
 			let document = documentUtils.getDocument(path);
 			let nameAndStream = documentUtils.getDocNameAndStream(document);
 			let name = nameAndStream[0];
