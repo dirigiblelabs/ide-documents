@@ -4,7 +4,6 @@ let documentUtils = require("ide-documents/utils/cmis/document");
 let contentTypeHandler = require("ide-documents/utils/content-type-handler");
 
 exports.get = function(path) {
-	console.warn("DocumentsProcessor.get()----");
 	let document = documentUtils.getDocument(path);
 	let nameAndStream = documentUtils.getDocNameAndStream(document);
 	let contentStream = nameAndStream[1];
