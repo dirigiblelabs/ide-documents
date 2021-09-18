@@ -8,13 +8,11 @@
  * Contributors:
  *   SAP - initial API and implementation
  */
-var streams = require("io/v4/streams");
-var imageIO = require("io/v4/image");
-var documentUtils = require("ide-documents/utils/cmis/document");
+let streams = require("io/v4/streams");
+let imageIO = require("io/v4/image");
+let documentUtils = require("ide-documents/utils/cmis/document");
 
-
-exports.uploadImageWithResize = function(folder, name, image, width, height) {
-    let fileName = name;
+exports.uploadImageWithResize = function (folder, name, image, width, height) {
     let mimetype = image.getContentType();
     let originalInputStream = image.getInputStream();
     let inputStream = new streams.InputStream();

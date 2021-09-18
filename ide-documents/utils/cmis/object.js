@@ -8,29 +8,29 @@
  * Contributors:
  *   SAP - initial API and implementation
  */
-var cmis = require("cms/v4/cmis");
-var cmisSession = cmis.getSession();
+let cmis = require("cms/v4/cmis");
+let cmisSession = cmis.getSession();
 
-exports.getObject = function(path){
+exports.getObject = function (path) {
 	try {
 		if (path === null || path === undefined) {
 			return null;
-		}		
+		}
 		return cmisSession.getObjectByPath(path);
-	} catch(e) {
+	} catch (e) {
 		console.error(`Error [${e.message}] in getting an object by path [${path}]`);
 	}
 	return null;
 };
 
-exports.getById = function(id) {
+exports.getById = function (id) {
 	return cmisSession.getObject(id);
 };
 
-exports.deleteObject = function(object){
+exports.deleteObject = function (object) {
 	object.delete();
 };
 
-exports.renameObject = function(object, newName){
+exports.renameObject = function (object, newName) {
 	object.rename(newName);
 };

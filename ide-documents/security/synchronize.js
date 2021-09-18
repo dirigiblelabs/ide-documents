@@ -1,4 +1,4 @@
-var constraintsProcessor = require("ide-documents/api/processors/constraintsProcessor");
+let constraintsProcessor = require("ide-documents/api/processors/constraintsProcessor");
 
 let accessDefinitions = constraintsProcessor.getAccessDefinitions();
 constraintsProcessor.updateAccessDefinitions(accessDefinitions);
