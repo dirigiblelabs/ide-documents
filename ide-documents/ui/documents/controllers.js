@@ -59,7 +59,7 @@ angular
 
 		function refreshFolder() {
 			getFolder($scope.folder.path)
-				.success(function (data) {
+				.then(function (data) {
 					$scope.folder = data;
 				});
 		}
@@ -85,17 +85,17 @@ angular
 		}
 
 		getFolder()
-			.success(function (data) {
+			.then(function (data) {
 				setCurrentFolder(data);
 			});
 
 		$scope.handleExplorerClick = function (cmisObject) {
 			if (cmisObject.type === "cmis:folder" && !$scope.inDeleteSession) {
 				getFolder($scope.getFullPath(cmisObject.name))
-					.success(function (data) {
+					.then(function (data) {
 						setCurrentFolder(data);
-					})
-					.error(function (data) {
+					}, 
+					function (data) {
 						openErrorModal("Failed to open folder", data.err.message);
 					});
 			}
@@ -111,7 +111,7 @@ angular
 
 		$scope.crumbsChanged = function (entry) {
 			getFolder(entry.path)
-				.success(function (data) {
+				.then(function (data) {
 					setCurrentFolder(data);
 				});
 		};
@@ -119,11 +119,11 @@ angular
 		$scope.createFolder = function (newFolderName) {
 			let postData = { parentFolder: $scope.folder.path, name: newFolderName };
 			$http.post(folderApi, postData)
-				.success(function () {
+				.then(function () {
 					$('#newFolderModal').modal('toggle');
 					refreshFolder();
-				})
-				.error(function (data) {
+				}, 
+				function (data) {
 					$('#newFolderModal').modal('toggle');
 					openErrorModal("Failed to create folder", data.err.message);
 				});
@@ -147,10 +147,10 @@ angular
 				method: 'DELETE',
 				data: pathsToDelete,
 				headers: { "Content-Type": "application/json;charset=utf-8" }
-			}).success(function () {
+			}).then(function () {
 				$scope.inDeleteSession = false;
 				refreshFolder();
-			}).error(function (error) {
+			}, function (error) {
 				$scope.inDeleteSession = false;
 				openErrorModal("Failed to delete items", error.err.message);
 			});
@@ -190,10 +190,10 @@ angular
 				method: 'PUT',
 				data: { path: $scope.getFullPath(itemName), name: newName },
 				headers: { "Content-Type": "application/json;charset=utf-8" }
-			}).success(function () {
+			}).then(function () {
 				$('#renameModal').modal('toggle');
 				refreshFolder();
-			}).error(function (error) {
+			}, function (error) {
 				$('#renameModal').modal('toggle');
 				let title = "Failed to rename item" + $scope.itemToRename.name;
 				openErrorModal(title, error.err.message);
