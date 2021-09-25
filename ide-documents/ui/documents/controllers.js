@@ -1,12 +1,13 @@
 /*
- * Copyright (c) 2010-2020 SAP and others.
+ * Copyright (c) 2021 SAP SE or an SAP affiliate company and Eclipse Dirigible contributors
+ *
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v20.html
  *
- * Contributors:
- *   SAP - initial API and implementation
+ * SPDX-FileCopyrightText: 2021 SAP SE or an SAP affiliate company and Eclipse Dirigible contributors
+ * SPDX-License-Identifier: EPL-2.0
  */
 /*globals angular, $ */
 
@@ -60,7 +61,7 @@ angular
 		function refreshFolder() {
 			getFolder($scope.folder.path)
 				.then(function (data) {
-					$scope.folder = data;
+					$scope.folder = data.data;
 				});
 		}
 
@@ -86,17 +87,17 @@ angular
 
 		getFolder()
 			.then(function (data) {
-				setCurrentFolder(data);
+				setCurrentFolder(data.data);
 			});
 
 		$scope.handleExplorerClick = function (cmisObject) {
 			if (cmisObject.type === "cmis:folder" && !$scope.inDeleteSession) {
 				getFolder($scope.getFullPath(cmisObject.name))
 					.then(function (data) {
-						setCurrentFolder(data);
+						setCurrentFolder(data.data);
 					}, 
 					function (data) {
-						openErrorModal("Failed to open folder", data.err.message);
+						openErrorModal("Failed to open folder", data.data.err.message);
 					});
 			}
 		};
@@ -112,7 +113,7 @@ angular
 		$scope.crumbsChanged = function (entry) {
 			getFolder(entry.path)
 				.then(function (data) {
-					setCurrentFolder(data);
+					setCurrentFolder(data.data);
 				});
 		};
 
@@ -152,7 +153,7 @@ angular
 				refreshFolder();
 			}, function (error) {
 				$scope.inDeleteSession = false;
-				openErrorModal("Failed to delete items", error.err.message);
+				openErrorModal("Failed to delete items", error.data.err.message);
 			});
 
 			$scope.inDeleteSession = false;
@@ -196,7 +197,7 @@ angular
 			}, function (error) {
 				$('#renameModal').modal('toggle');
 				let title = "Failed to rename item" + $scope.itemToRename.name;
-				openErrorModal(title, error.err.message);
+				openErrorModal(title, error.data.err.message);
 			});
 		}
 
