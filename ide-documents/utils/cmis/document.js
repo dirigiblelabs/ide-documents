@@ -20,7 +20,8 @@ function DocumentSerializer(cmisDocument) {
 }
 
 exports.uploadDocument = function (folder, document) {
-	let fileName = document.getName();
+	//check for .name first as it's passed from uploadDocumentOverwrite. Refactor
+	let fileName = document.name ?? document.getName();
 	let mimetype = document.getContentType();
 	let size = document.getSize();
 	let inputStream = document.getInputStream();
