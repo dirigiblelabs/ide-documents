@@ -41,7 +41,7 @@ exports.uploadDocumentOverwrite = function (folder, document) {
 
 	document.name = newName;
 	exports.uploadDocument(folder, document);
-
+	//todo add "/" only if necessary
 	try {
 		let oldDoc = objectUtils.getObject(folder.getPath() + "/" + oldName);
 		objectUtils.deleteObject(oldDoc);

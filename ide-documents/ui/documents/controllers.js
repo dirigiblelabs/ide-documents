@@ -82,6 +82,7 @@ angular
 		};
 
 		$scope.getFullPath = function (itemName) {
+			//todo: add / only if last char is /
 			return $scope.folder.path + '/' + itemName;
 		}
 
