@@ -11,6 +11,7 @@
 let cmis = require("cms/v4/cmis");
 let streams = require("io/v4/streams");
 let objectUtils = require("ide-documents/utils/cmis/object");
+const path = org.eclipse.dirigible.repository.api.RepositoryPath;
 
 let cmisSession = cmis.getSession();
 
@@ -41,15 +42,16 @@ exports.uploadDocumentOverwrite = function (folder, document) {
 
 	document.name = newName;
 	exports.uploadDocument(folder, document);
-	//todo add "/" only if necessary
+
 	try {
-		let oldDoc = objectUtils.getObject(folder.getPath() + "/" + oldName);
+		let docPath = path.normalizePath(folder.getPath(), oldName)
+		let oldDoc = objectUtils.getObject(docPath);
 		objectUtils.deleteObject(oldDoc);
 	} catch (e) {
 		//do nothing
 	}
-
-	let newDoc = objectUtils.getObject(folder.getPath() + "/" + newName);
+	let docPath = path.normalizePath(folder.getPath(), newName)
+	let newDoc = objectUtils.getObject(docPath);
 	objectUtils.renameObject(newDoc, oldName);
 };
 

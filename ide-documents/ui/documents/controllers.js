@@ -82,8 +82,7 @@ angular
 		};
 
 		$scope.getFullPath = function (itemName) {
-			//todo: add / only if last char is /
-			return $scope.folder.path + '/' + itemName;
+			return ($scope.folder.path + '/' + itemName).replace(/\/\//g, "/");
 		}
 
 		getFolder()
@@ -96,10 +95,10 @@ angular
 				getFolder($scope.getFullPath(cmisObject.name))
 					.then(function (data) {
 						setCurrentFolder(data.data);
-					}, 
-					function (data) {
-						openErrorModal("Failed to open folder", data.data.err.message);
-					});
+					},
+						function (data) {
+							openErrorModal("Failed to open folder", data.data.err.message);
+						});
 			}
 		};
 
@@ -124,11 +123,11 @@ angular
 				.then(function () {
 					$('#newFolderModal').modal('toggle');
 					refreshFolder();
-				}, 
-				function (data) {
-					$('#newFolderModal').modal('toggle');
-					openErrorModal("Failed to create folder", data.err.message);
-				});
+				},
+					function (data) {
+						$('#newFolderModal').modal('toggle');
+						openErrorModal("Failed to create folder", data.err.message);
+					});
 			$scope.newFolderName = undefined;
 
 		};
