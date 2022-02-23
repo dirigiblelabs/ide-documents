@@ -157,7 +157,10 @@ angular.module('page')
 			contents = loadContents();
 			$scope.access = JSON.parse(contents);
 			$scope.access.constraints.forEach(function (constraint) {
-				constraint.rolesLine = constraint.roles.join();
+				if (constraint.roles && constraint.roles.length > 0) {
+					constraint.rolesLine = constraint.roles.join();
+				}
+
 			});
 			sortAccessConstraints();
 		}

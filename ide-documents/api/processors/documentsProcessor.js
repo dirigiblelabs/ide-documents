@@ -94,11 +94,14 @@ function hasAccessPermissions(constraints, path) {
 		if (constraintPath.length === 0 || (path.length >= constraintPath.length && constraintPath.startsWith(path))) {
 			if (method !== null && method !== undefined && (method.toUpperCase() === "READ" || method === "*")) {
 				let roles = constraints[i].roles;
-				for (let j = 0; j < roles.length; j++) {
-					if (!user.isInRole(roles[j])) {
-						return false;
+				if (roles && roles.length) {
+					for (let j = 0; j < roles.length; j++) {
+						if (!user.isInRole(roles[j])) {
+							return false;
+						}
 					}
 				}
+
 			}
 		}
 	}
