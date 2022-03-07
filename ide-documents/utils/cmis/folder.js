@@ -26,13 +26,13 @@ function ChildSerializer(cmisObject) {
 		this.restrictedAccess = true;
 	}
 	let readOnly;
-	let writeOnly;
+	let readable;
 	let pathReadAccessDefinitionFound = false;
 	let pathWriteAccessDefinitionFound = false;
 	if (readAccessDefinitions.length > 0) {
 		for (let i = 0; i < readAccessDefinitions.length; i++) {
 			if (readAccessDefinitions[i].path === this.id) {
-				readOnly = hasAccess([readAccessDefinitions[i]]);
+				readable = hasAccess([readAccessDefinitions[i]]);
 				pathReadAccessDefinitionFound = true;
 				break;
 			}
@@ -41,7 +41,7 @@ function ChildSerializer(cmisObject) {
 	if (writeAccessDefinitions.length > 0) {
 		for (let i = 0; i < writeAccessDefinitions.length; i++) {
 			if (writeAccessDefinitions[i].path === this.id) {
-				writeOnly = hasAccess([writeAccessDefinitions[i]]);
+				readOnly = !hasAccess([writeAccessDefinitions[i]]);
 				pathWriteAccessDefinitionFound = true;
 				break;
 			}
@@ -52,17 +52,15 @@ function ChildSerializer(cmisObject) {
 		let readOnlyAccessDefinitions = readAccessDefinitions.filter(e => e.method === cmis.METHOD_READ);
 		let writeOnlyAccessDefinitions = writeAccessDefinitions.filter(e => e.method === cmis.METHOD_WRITE);
 		if (readOnlyAccessDefinitions.length > 0) {
-			readOnly = hasAccess(readOnlyAccessDefinitions);
+			readable = hasAccess(readOnlyAccessDefinitions);
 		}
 		if (writeOnlyAccessDefinitions.length > 0) {
-			writeOnly = hasAccess(writeOnlyAccessDefinitions);
+			readOnly = !hasAccess(writeOnlyAccessDefinitions);
 		}
 	}
 
-	if (readOnly && !writeOnly || !readOnly && writeOnly) {
-		this.readOnly = readOnly;
-		this.writeOnly = writeOnly;
-	}
+	this.readOnly = readOnly;
+	this.readable = readable;
 }
 
 function FolderSerializer(cmisFolder) {
