@@ -33,6 +33,7 @@ function ChildSerializer(cmisObject) {
 		for (let i = 0; i < readAccessDefinitions.length; i++) {
 			if (readAccessDefinitions[i].path === this.id) {
 				readable = hasAccess([readAccessDefinitions[i]]);
+				readOnly = true;
 				pathReadAccessDefinitionFound = true;
 				break;
 			}
