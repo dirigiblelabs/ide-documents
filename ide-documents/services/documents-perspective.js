@@ -8,13 +8,18 @@
  * Contributors:
  *   SAP - initial API and implementation
  */
-exports.getView = function () {
-	return {
-		id: "documents",
-		name: "Documents",
-		factory: "frame",
-		region: "center-bottom",
-		label: "Documents",
-		link: "../ide-documents/ui/documents/index.html"
-	};
+
+const perspectiveData = {
+	id: "documents",
+	name: "Documents",
+	link: "../ide-documents/index.html",
+	order: "150",
+	image: "clipboard", // deprecated
+	icon: "../ide-documents/images/documents.svg",
+};
+
+if (typeof exports !== 'undefined') {
+	exports.getPerspective = function () {
+		return perspectiveData;
+	}
 }
