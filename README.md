@@ -1,7 +1,7 @@
 # Documents Plugin for Eclipse Dirigible
 
 [![Eclipse License](http://img.shields.io/badge/license-Eclipse-brightgreen.svg)](LICENSE)
-[![GitHub contributors](https://img.shields.io/github/contributors/dirigiblelabs/ide-documents.svg)](https://github.com/dirigiblelabs/ide-docs/graphs/contributors)
+[![GitHub contributors](https://img.shields.io/github/contributors/dirigiblelabs/ide-documents.svg)](https://github.com/dirigiblelabs/ide-documents/graphs/contributors)
 
 ## Overview
 
@@ -9,7 +9,7 @@ Documents Plugin for the [Eclipse Dirigible](https://github.com/eclipse/dirigibl
 
 Build the [Eclipse Dirigible](https://github.com/eclipse/dirigible), deploy on e.g. Tomcat Web Container and go to location:
 
-> http://localhost:8080/services/v4/web/ide-docs/docs.html
+> http://localhost:8080/services/v4/web/ide-documents/docs.html
 
 ## License
 
