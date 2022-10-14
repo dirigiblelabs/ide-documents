@@ -285,7 +285,7 @@ documentsApp.controller('DocServiceCtrl', ['$scope', '$http', '$timeout', '$elem
 		function (msg) {
 			if (msg.data === 'btnOK' && $scope.itemsToDelete.length > 0) {
 				let pathsToDelete = $scope.itemsToDelete.map(item => $scope.getFullPath(item.name));
-				let url = documentsApi + '?force=true';
+				let url = documentsApi;
 
 				showProgressDialog();
 
